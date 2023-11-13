@@ -4,24 +4,54 @@ import { fetchRegister, selectIsAuth } from '../../redux/slices/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
-
+import axios from '../../axios';
 
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
 
 import styles from './Login.module.scss';
 
 export const Registration = () => {
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
+  const [avatarUrl, setAvatarUrl] = React.useState('');
+  const inputFileRef = React.useRef(null);
+  // const [fullName, setFullName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+
+  const handleChangeFile = async (evt) => {
+    try {
+      const formData = new FormData();
+      const file = evt.target.files[0];
+      formData.append('image', file);
+      const { data } = await axios.post('/upload', formData);
+      setAvatarUrl(data.url);
+    } catch (err) {
+      console.warn(err);
+      alert('Bad upload');
+    }
+  };
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {
@@ -32,7 +62,8 @@ export const Registration = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (value) => {
+    const values = { ...value, avatarUrl };
     const data = await dispatch(fetchRegister(values));
 
     if (!data.payload) {
@@ -54,7 +85,17 @@ export const Registration = () => {
         Создание аккаунта
       </Typography>
       <div className={styles.avatar}>
-        <Avatar sx={{ width: 100, height: 100 }} />
+          <Avatar
+            sx={{ width: 100, height: 100 }}
+            src={`http://localhost:5000${avatarUrl}`}
+            onClick={() => inputFileRef.current.click()}
+          />
+        <input
+          ref={inputFileRef}
+          type="file"
+          onChange={handleChangeFile}
+          hidden
+        />
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
@@ -82,7 +123,13 @@ export const Registration = () => {
           label="Пароль"
           fullWidth
         />
-        <Button type='submit' disabled={!isValid} size="large" variant="contained" fullWidth>
+        <Button
+          type="submit"
+          disabled={!isValid}
+          size="large"
+          variant="contained"
+          fullWidth
+        >
           Зарегистрироваться
         </Button>
       </form>
