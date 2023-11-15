@@ -20,21 +20,6 @@ export const Registration = () => {
   const dispatch = useDispatch();
   const [avatarUrl, setAvatarUrl] = React.useState('');
   const inputFileRef = React.useRef(null);
-  // const [fullName, setFullName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
 
   const handleChangeFile = async (evt) => {
     try {

@@ -1,13 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../axios';
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const { data } = await axios.get('/posts');
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (params = 'new') => {
+  const { data } = await axios.get(`/posts/${params}`);
   return data;
 });
 
 export const fetchTags = createAsyncThunk('posts/fetchTags', async () => {
   const { data } = await axios.get('/tags');
+  return data;
+});
+
+export const fetchComments = createAsyncThunk('posts/fetchComments', async () => {
+  const { data } = await axios.get('/comments');
   return data;
 });
 
@@ -21,6 +26,10 @@ const initialState = {
     status: 'loading',
   },
   tags: {
+    items: [],
+    status: 'loading',
+  },
+  comments: {
     items: [],
     status: 'loading',
   },
@@ -57,6 +66,18 @@ const postsSlice = createSlice({
     },
     [fetchRemovePost.pending]: (state, action) => {
       state.posts.items = state.posts.items.filter((obj) => obj._id !== action.meta.arg);
+    },
+    [fetchComments.pending]: (state) => {
+      state.comments.items = [];
+      state.comments.status = 'loading';
+    },
+    [fetchComments.fulfilled]: (state, action) => {
+      state.comments.items = action.payload;
+      state.comments.status = 'loaded';
+    },
+    [fetchComments.rejected]: (state) => {
+      state.comments.items = [];
+      state.comments.status = 'loaded';
     },
   },
 });

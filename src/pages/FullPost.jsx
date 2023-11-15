@@ -1,24 +1,43 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from '../axios';
 
 import { Post } from '../components/Post';
-import { Index } from '../components/AddComment';
+import { AddComment } from '../components/AddComment';
 import { CommentsBlock } from '../components/CommentsBlock';
 import ReactMarkdown from 'react-markdown';
 
 export const FullPost = () => {
   const [data, setData] = React.useState();
   const [isLoading, setLoading] = React.useState(true);
-
+  const [comments, setComments] = React.useState([]);
+  const userData = useSelector((state) => state.auth.data);
+  console.log(userData)
   const { id } = useParams();
 
+  const onSubmit = async (text, setText) => {
+    try {
+      const field = {
+        text: text,
+      };
+      await axios.post(`/comments/${id}`, field);
+      const {data} = await axios.get(`/posts/${id}`);
+      setComments(data.comments)
+      setText('');
+    } catch (err) {
+      console.warn(err);
+      alert('Bad create comment');
+    }
+  };
+
   React.useEffect(() => {
+    setComments([])
     axios
       .get(`/posts/${id}`)
       .then((res) => {
         setData(res.data);
-        console.log(data);
+        setComments(res.data.comments);
         setLoading(false);
       })
       .catch((err) => {
@@ -40,32 +59,17 @@ export const FullPost = () => {
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewsCount}
-        commentsCount={3}
+        commentsCount={comments.length}
         tags={data.tags}
         isFullPost
       >
         <ReactMarkdown children={data.text} />
       </Post>
       <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: 'Вася Пупкин',
-              avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-            },
-            text: 'Это тестовый комментарий 555555',
-          },
-          {
-            user: {
-              fullName: 'Иван Иванов',
-              avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-            },
-            text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-          },
-        ]}
-        isLoading={false}
+        items={comments}
+        isLoading={isLoading}
       >
-        <Index />
+        <AddComment user={userData} onSubmit={onSubmit} postId={id}/>
       </CommentsBlock>
     </>
   );

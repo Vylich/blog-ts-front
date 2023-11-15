@@ -9,32 +9,45 @@ import axios from '../axios';
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { fetchComments, fetchPosts, fetchTags } from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.data);
-  const { posts, tags } = useSelector((state) => state.posts);
+  const { posts, tags, comments } = useSelector((state) => state.posts);
+  const [tabsHandler, setTabsHandler] = React.useState(0)
+
 
 
   const isPostsLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
+  const isCommentsLoading = tags.status === 'loading';
+
+
 
 
   React.useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
+    dispatch(fetchComments());
+
   }, []);
 
   return (
     <>
       <Tabs
         style={{ marginBottom: 15 }}
-        value={0}
+        value={tabsHandler}
         aria-label="basic tabs example"
       >
-        <Tab label="Новые" />
-        <Tab label="Популярные" />
+        <Tab label="Новые" onClick={() => {
+          setTabsHandler(0)
+          dispatch(fetchPosts('new'));
+          }}/>
+        <Tab label="Популярные" onClick={() => {
+          setTabsHandler(1)
+          dispatch(fetchPosts('populate'));
+          }}/>
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
@@ -49,7 +62,7 @@ export const Home = () => {
                 user={obj.user}
                 createdAt={obj.createdAt}
                 viewsCount={obj.viewsCount}
-                commentsCount={3}
+                commentsCount={obj.comments.length}
                 tags={obj.tags ? obj.tags : ''}
                 isEditable={userData?._id === obj.user._id}
               />
@@ -62,23 +75,8 @@ export const Home = () => {
             isLoading={isTagsLoading}
           />
           <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
-            isLoading={false}
+            items={comments.items ? comments.items : ''}
+            isLoading={isCommentsLoading}
           />
         </Grid>
       </Grid>
