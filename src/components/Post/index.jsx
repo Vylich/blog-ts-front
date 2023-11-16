@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
+import 'moment/locale/ru'
 
 import { fetchRemovePost } from '../../redux/slices/posts';
 
@@ -30,6 +32,7 @@ export const Post = ({
   isEditable,
 }) => {
   const dispatch = useDispatch();
+  moment.locale("ru");
 
   if (isLoading) {
     return <PostSkeleton />;
@@ -63,7 +66,7 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...user} additionalText={createdAt} />
+        <UserInfo {...user} additionalText={moment(createdAt).startOf('hour').fromNow()} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
@@ -71,7 +74,7 @@ export const Post = ({
           <ul className={styles.tags}>
             {tags.map((name) => (
               <li key={name}>
-                <Link to={`/tag/${name}`}>#{name}</Link>
+                <Link to={`/tags/${name}`}>#{name}</Link>
               </li>
             ))}
           </ul>

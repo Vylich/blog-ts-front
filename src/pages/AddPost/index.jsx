@@ -13,10 +13,10 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 
 export const AddPost = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
 
   const [text, setText] = React.useState('');
   const [title, setTitle] = React.useState('');
@@ -33,7 +33,7 @@ export const AddPost = () => {
       const file = evt.target.files[0];
       formData.append('image', file);
       const { data } = await axios.post('/upload', formData);
-      setImageUrl(data.url)
+      setImageUrl(data.url);
     } catch (err) {
       console.warn(err);
       alert('Bad upload');
@@ -41,7 +41,7 @@ export const AddPost = () => {
   };
 
   const onClickRemoveImage = () => {
-    setImageUrl('')
+    setImageUrl('');
   };
 
   const onChange = React.useCallback((value) => {
@@ -56,12 +56,14 @@ export const AddPost = () => {
         title,
         imageUrl,
         tags,
-        text
-      }
+        text,
+      };
 
-      console.log(fields)
+      console.log(fields);
 
-      const {data} = isEditing ? await axios.patch(`/posts/${id}`, fields) : await axios.post('/posts', fields);
+      const { data } = isEditing
+        ? await axios.patch(`/posts/${id}`, fields)
+        : await axios.post('/posts', fields);
 
       const _id = isEditing ? id : data._id;
 
@@ -74,17 +76,20 @@ export const AddPost = () => {
 
   React.useEffect(() => {
     if (id) {
-      axios.get(`/posts/${id}`).then(({data}) => {
-        setTitle(data.title);
-        setImageUrl(data.imageUrl);
-        setText(data.text);
-        setTags(data.tags.join(','));
-      }).catch(err => {
-        console.warn(err);
-        alert('Bad send post');
-      })
+      axios
+        .get(`/posts/${id}`)
+        .then(({ data }) => {
+          setTitle(data.title);
+          setImageUrl(data.imageUrl);
+          setText(data.text);
+          setTags(data.tags.join(','));
+        })
+        .catch((err) => {
+          console.warn(err);
+          alert('Bad send post');
+        });
     }
-  }, [])
+  }, []);
 
   const options = React.useMemo(
     () => ({
@@ -107,35 +112,38 @@ export const AddPost = () => {
 
   return (
     <Paper style={{ padding: 30 }}>
-      <Button
-        onClick={() => inputFileRef.current.click()}
-        variant="outlined"
-        size="large"
-      >
-        Загрузить превью
-      </Button>
-      <input
-        ref={inputFileRef}
-        type="file"
-        onChange={handleChangeFile}
-        hidden
-      />
-      {imageUrl && (
-        <>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={onClickRemoveImage}
-          >
-            Удалить
-          </Button>
-          <img
-            className={styles.image}
-            src={`http://localhost:5000${imageUrl}`}
-            alt="Uploaded"
-          />
-        </>
-      )}
+      <div className={styles.imageBlock}>
+        <Button
+          onClick={() => inputFileRef.current.click()}
+          variant="outlined"
+          size="large"
+        >
+          Загрузить превью
+        </Button>
+        <input
+          ref={inputFileRef}
+          type="file"
+          onChange={handleChangeFile}
+          hidden
+        />
+        {imageUrl && (
+          <>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={onClickRemoveImage}
+              size="large"
+            >
+              Удалить
+            </Button>
+            <img
+              className={styles.image}
+              src={`http://localhost:5000${imageUrl}`}
+              alt="Uploaded"
+            />
+          </>
+        )}
+      </div>
       <br />
       <br />
       <TextField

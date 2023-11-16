@@ -13,7 +13,18 @@
 }
 
 .image {
-  width: 100%;
+  width: 50%;
+  margin-top: 20px;
+}
+
+.imageBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  button {
+    margin: 5px;
+  }
 }
 
 .tags {
