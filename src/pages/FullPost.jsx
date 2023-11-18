@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from '../axios';
+import { useDispatch } from 'react-redux';
+import { fetchRemoveComment } from '../redux/slices/posts';
 
 import { Post } from '../components/Post';
 import { AddComment } from '../components/AddComment';
@@ -13,8 +15,9 @@ export const FullPost = () => {
   const [isLoading, setLoading] = React.useState(true);
   const [comments, setComments] = React.useState([]);
   const userData = useSelector((state) => state.auth.data);
-  console.log(userData)
+
   const { id } = useParams();
+  const dispatch = useDispatch();
 
   const onSubmit = async (text, setText) => {
     try {
@@ -30,6 +33,14 @@ export const FullPost = () => {
       alert('Bad create comment');
     }
   };
+
+  const onRemoveComment = async (commentId) => {
+    if (window.confirm('Are you sure you want remove comment?')) {
+      dispatch(fetchRemoveComment(commentId));
+      const {data} = await axios.get(`/posts/${id}`);
+      setComments(data.comments)
+    }
+  }
 
   React.useEffect(() => {
     setComments([])
@@ -66,6 +77,8 @@ export const FullPost = () => {
         <ReactMarkdown children={data.text} />
       </Post>
       <CommentsBlock
+        onRemoveComment={onRemoveComment}
+        isEditable
         items={comments}
         isLoading={isLoading}
       >

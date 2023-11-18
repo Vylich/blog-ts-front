@@ -16,6 +16,10 @@ export const fetchComments = createAsyncThunk('posts/fetchComments', async () =>
   return data;
 });
 
+export const fetchRemoveComment = createAsyncThunk('posts/fetchRemoveComment', async (id) =>
+  axios.delete(`/comment/${id}`)
+);
+
 export const fetchRemovePost = createAsyncThunk('posts/fetchRemovePost', async (id) =>
   axios.delete(`/posts/${id}`)
 );

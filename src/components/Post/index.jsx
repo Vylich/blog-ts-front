@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/ru'
@@ -33,6 +33,8 @@ export const Post = ({
 }) => {
   const dispatch = useDispatch();
   moment.locale("ru");
+  const navigate = useNavigate();
+
 
   if (isLoading) {
     return <PostSkeleton />;
@@ -74,7 +76,7 @@ export const Post = ({
           <ul className={styles.tags}>
             {tags.map((name) => (
               <li key={name}>
-                <Link to={`/tags/${name}`}>#{name}</Link>
+                <Link to={`/tags/${name}`}>{name ? `#${name}` : ''}</Link>
               </li>
             ))}
           </ul>
