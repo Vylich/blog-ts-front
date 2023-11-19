@@ -14,7 +14,7 @@ export const AddComment = ({ user, onSubmit }) => {
       <div className={styles.root}>
         <Avatar
           classes={{ root: styles.avatar }}
-          src={`${process.env.REACT_APP_API_URL}${user.avatarUrl} || '/noavatar.png'`}
+          src={user ? `${process.env.REACT_APP_API_URL}${user.avatarUrl}` : ''}
         />
         <div className={styles.form}>
           <TextField
