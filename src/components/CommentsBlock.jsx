@@ -37,7 +37,7 @@ export const CommentsBlock = ({
                 ) : (
                   <Avatar
                     alt={obj.user.fullName}
-                    src={`${process.env.REACT_APP_API_URL}${obj.user.avatarUrl}`}
+                    src={`${obj.user.avatarUrl}`}
                   />
                 )}
               </ListItemAvatar>
