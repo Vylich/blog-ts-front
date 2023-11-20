@@ -121,7 +121,6 @@ export const AddPost = () => {
         <input
           ref={inputFileRef}
           type="file"
-          name="file"
           onChange={handleChangeFile}
           hidden
         />
