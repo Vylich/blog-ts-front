@@ -121,6 +121,7 @@ export const AddPost = () => {
         <input
           ref={inputFileRef}
           type="file"
+          name="file"
           onChange={handleChangeFile}
           hidden
         />
@@ -134,11 +135,7 @@ export const AddPost = () => {
             >
               Удалить
             </Button>
-            <img
-              className={styles.image}
-              src={`${imageUrl}`}
-              alt="Uploaded"
-            />
+            <img className={styles.image} src={`${imageUrl}`} alt="Uploaded" />
           </>
         )}
       </div>
