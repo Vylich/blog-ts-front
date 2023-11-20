@@ -72,12 +72,13 @@ export const Registration = () => {
       <div className={styles.avatar}>
           <Avatar
             sx={{ width: 100, height: 100 }}
-            src={`${process.env.REACT_APP_API_URL}${avatarUrl}`}
+            src={`${avatarUrl}`}
             onClick={() => inputFileRef.current.click()}
           />
         <input
           ref={inputFileRef}
           type="file"
+          name='image'
           onChange={handleChangeFile}
           hidden
         />
